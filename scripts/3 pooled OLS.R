@@ -1,6 +1,6 @@
 # Script: Pooled OLS
 # Author: Tina
-# Date: 29.11.2023
+# Date: 30.11.2023
 
 library(dplyr)     # for data tranformations
 library(tidyr)     # for tidy data
@@ -11,7 +11,7 @@ library(lmtest)    # for Heteroskedascity check with bptest() function
 library(sandwich)  # for Newey-West standard errors
 library(ggplot2)   # for making plots
 
-#loading the balanced/cleaned of NA value df
+# loading balanced data
 load("data/data_processed/data.RData")
 
 # Data Selection
@@ -340,35 +340,3 @@ notes_rurality_urbanity <- "
 They are now unbalanced panels, which I think causes issues with assumptions.
 Also not assumption checked.
 urban model is not significant. rural model does show significance for changes in GP"
-
-#### Comparing Shrinking VS non-shrinking T-test ####
-# Splitting the dataframe into two groups
-df_2018 <- df %>% filter(year == "2018")
-shrinkage_df = df_2018[df_2018$shrinkage_region == TRUE,]
-non_shrinkage_df = df_2018[df_2018$shrinkage_region == FALSE,]
-
-#Shapiro Wilk test for Normality
-shapiro.test(shrinkage_df$perc_change_Pop_65_to_75_Meds) # normal
-shapiro.test(non_shrinkage_df$perc_change_Pop_65_to_75_Meds) # not normal ugh
-
-# QQ Plot for Normality
-qqnorm(shrinkage_df$perc_change_Pop_65_to_75_Meds)
-
-qqline(shrinkage_df$perc_change_Pop_65_to_75_Meds) #wobbly
-
-qqnorm(non_shrinkage_df$perc_change_Pop_65_to_75_Meds)
-
-qqline(non_shrinkage_df$perc_change_Pop_65_to_75_Meds) # wobbly at the ends
-# F test for variances
-var.test(
-  shrinkage_df$perc_change_Pop_65_to_75_Meds,
-  non_shrinkage_df$perc_change_Pop_65_to_75_Meds
-)
-# not significant, but maybe problematic
-# t test comparing group means
-t.test_result = t.test(
-  shrinkage_df$perc_change_Pop_65_to_75_Meds,
-  non_shrinkage_df$perc_change_Pop_65_to_75_Meds
-)
-print(t.test_result)
-# also not significant
