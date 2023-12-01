@@ -4,21 +4,22 @@ This is the repository for the data analysis of my Bachelor's project in the fie
 spatial-heart-analysis/                                                                        
   ├── data/                                                                                                                      
   │   ├── data_import/                                                                                                  
-  │   │    ├──  imported_data.RData
-  │   │    └──  shapefile_data.RData
+  │   │    ├──  imported_data.RData                                                                                                
+  │   │    └──  shapefile_data.RData                                                                                
   │   └── processed_data/                                                                          
-  │        ├──  data.RData
-  │        └──  data_unbalanced.RData
+  │        ├──  data.RData                                                              
+  │        └──  data_unbalanced.RData                                                            
   ├── outputs/                                                                                                              
   │   ├── maps/                                                                                                                                                                                      
   │   ├── graphs/                                                                                                                                                                                         
-  │   └── results/ 
+  │   └── results/                                                           
   ├── scripts/                                                                                                                                                                                                                     │   ├── 1 data import.R                                                                                                                                                                                      
-  │   ├── 2 data transformations.R                     
-  │   ├── 3 pooled OLS.R
-  │   ├── 4 other data analysis.R
-  │   ├── 5 data visualisation and mapping.R   
-  │   └── 6 tidy base model analysis with functions.R                                                                                                                                                                              └── README.md   
+  │   ├── 2 data transformations.R                                   
+  │   ├── 3 pooled OLS.R                                                  
+  │   ├── 4 other data analysis.R                                              
+  │   ├── 5 data visualisation and mapping.R                                     
+  │   └── 6 tidy base model analysis with functions.R                                                                                                                                                                         
+  └── README.md                                       
 
 ## Data Sources
 ### CBS - Proximity to Amenities by Municipality
