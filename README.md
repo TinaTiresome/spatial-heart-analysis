@@ -1,5 +1,24 @@
 # spatial-heart-analysis
 This is the repository for the data analysis of my Bachelor's project in the field of Human Geography and Urban Planning. Specifically, under the umbrella theme of Demography and Healthy Ageing.
+## structure
+spatial-heart-analysis/                                                                        
+  ├── data/                                                                                                                      
+  │   ├── data_import/                                                                                                  
+  │   │    ├──  imported_data.RData
+  │   │    └──  shapefile_data.RData
+  │   └── processed_data/                                                                          
+  │        ├──  data.RData
+  │        └──  data_unbalanced.RData
+  ├── outputs/                                                                                                              
+  │   ├── maps/                                                                                                                                                                                      
+  │   ├── graphs/                                                                                                                                                                                         
+  │   └── results/ 
+  ├── scripts/                                                                                                                                                                                                                     │   ├── 1 data import.R                                                                                                                                                                                      
+  │   ├── 2 data transformations.R                     
+  │   ├── 3 pooled OLS.R
+  │   ├── 4 other data analysis.R
+  │   ├── 5 data visualisation and mapping.R   
+  │   └── 6 tidy base model analysis with functions.R                                                                                                                                                                              └── README.md   
 
 ## Data Sources
 ### CBS - Proximity to Amenities by Municipality
@@ -21,15 +40,4 @@ Dataset: 60039FVW https://opendata.cbs.nl/statline/#/CBS/nl/dataset/60039fvw/tab
 ### CBS and PDOK - Administrative Boundaries as Shapefiles from PDOK webservice API
 CBS and PDOK [2014-2018] Municipal Boundaries. Dataset: CBS Gebiedsindelingen.       
 https://www.pdok.nl/introductie/-/article/cbs-gebiedsindelingen 
-
-## structure
-spatial-heart-analysis/                                                                        
-  ├── data/                                                                                                                      
-  │   ├── data_import/                                                                                                   
-  │   └── processed_data/                                                                                                         
-  ├── scripts/                                                                                                                                                                                                       
-  ├── outputs/                                                                                                              
-  │   ├── maps/                                                                                                                                                                                      
-  │   └── graphs/                                                                                                                                                                                         
-  │   └── results/                                                                                                                                                                                                 
-  └── documentation/                                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                               
