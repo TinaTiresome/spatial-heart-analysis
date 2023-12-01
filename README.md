@@ -7,13 +7,14 @@ spatial-heart-analysis/
   │   │    ├──  imported_data.RData                                                                                                
   │   │    └──  shapefile_data.RData                                                                                
   │   └── processed_data/                                                                          
-  │        ├──  data.RData                                                              
-  │        └──  data_unbalanced.RData                                                            
+  │    ..      ├──  data.RData                                                              
+  │    ..      └──  data_unbalanced.RData                                                            
   ├── outputs/                                                                                                              
   │   ├── maps/                                                                                                                                                                                      
   │   ├── graphs/                                                                                                                                                                                         
   │   └── results/                                                           
-  ├── scripts/                                                                                                                                                                                                                     │   ├── 1 data import.R                                                                                                                                                                                      
+  ├── scripts/                                                                                                                                                                                                       
+  │   ├── 1 data import.R                                                                                                                                                                                      
   │   ├── 2 data transformations.R                                   
   │   ├── 3 pooled OLS.R                                                  
   │   ├── 4 other data analysis.R                                              
