@@ -16,10 +16,8 @@ spatial-heart-analysis/
   ├── scripts/                                                                                                                                                                                                       
   │   ├── 1 data import.R                                                                                                                                                                                      
   │   ├── 2 data transformations.R                                   
-  │   ├── 3 pooled OLS.R                                                  
-  │   ├── 4 other data analysis.R                                              
-  │   ├── 5 data visualisation and mapping.R                                     
-  │   └── 6 tidy base model analysis with functions.R                                                                                                                                                                         
+  │   ├── 3 analysis.R                                                  
+  │   └── 4 data visualisation and mapping.R                                                                                                                                                                                                                     
   └── README.md                                       
 
 ## Data Sources
