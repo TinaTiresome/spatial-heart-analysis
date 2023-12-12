@@ -1,6 +1,6 @@
 # Script: Data Import
 # Author: Tina
-# Date: 29.11.2023
+# Date: 6.12.2023
 
 library(dplyr)     # for data tranformations
 library(tidyr)     # for tidy data
@@ -27,7 +27,8 @@ dataimport_meds <- cbs_get_data(
     "2015JJ00",
     "2016JJ00",
     "2017JJ00",
-    "2018JJ00"
+    "2018JJ00",
+    "2019JJ00"
   ),
   RegioS = has_substring("GM"),
   select = c(
@@ -84,7 +85,8 @@ dataimport_GP <- cbs_get_data(
     "2015JJ00",
     "2016JJ00",
     "2017JJ00",
-    "2018JJ00"
+    "2018JJ00",
+    "2019JJ00"
   ),
   Regions = has_substring("GM"),
   select = c("Periods",
@@ -126,7 +128,8 @@ dataimport_region <- cbs_get_data(
     "2015JJ00",
     "2016JJ00",
     "2017JJ00",
-    "2018JJ00"
+    "2018JJ00",
+    "2019JJ00"
   ),
   RegioS = has_substring("GM"),
   select = c(
@@ -136,6 +139,7 @@ dataimport_region <- cbs_get_data(
     "k_65Tot80Jaar_20",
     "k_80JaarOfOuder_21",
     "TotaalMetMigratieachtergrond_44",
+    "Bevolkingsdichtheid_57", # pop density
     "Overledenen_60",
     # number of deceased
     "ZiektenVanHartEnVaatstelsel_65",
@@ -146,7 +150,8 @@ dataimport_region <- cbs_get_data(
     # avg standardised income (excl students)
     "ParticuliereHuishoudensExclStudenten_141",
     # avg household wealth (excl students)
-    "TotDeAOWLeeftijd_152"
+    "TotDeAOWLeeftijd_152",
+    "Naam_290" # province
   ),
   base_url = "http://opendata.cbs.nl"
 )
@@ -176,7 +181,9 @@ dataimport_region <- dataimport_region %>%
     "rel_pop_growth" =  "BevolkingsgroeiRelatief_80",
     "avg_Standardized_Income" = "ParticuliereHuishoudensExclStudenten_131",
     "median_Household_Wealth" = "ParticuliereHuishoudensExclStudenten_141",
-    "total_Social_Security_Recipiants_excl_Pensioners" = "TotDeAOWLeeftijd_152"
+    "total_Social_Security_Recipiants_excl_Pensioners" = "TotDeAOWLeeftijd_152",
+    "pop_density_km2" = "Bevolkingsdichtheid_57",
+    "province" = "Naam_290"
   )
 
 #### Data 60039 - Rurality ####
@@ -194,13 +201,17 @@ dataimport_rurality <- cbs_get_data(
     "2015JJ00",
     "2016JJ00",
     "2017JJ00",
-    "2018JJ00"
+    "2018JJ00",
+    "2019JJ00"
   ),
   RegioS = has_substring("GM"),
   select = c(
     "StatusCijfer",
     "Perioden",
     "RegioS",
+    "k_65Tot75Jaar_4", 
+    "k_75Tot85Jaar_5", 
+    "k_85JaarOfOuder_6",
     "TotaalStedelijkGebied_19",
     "TotaalLandelijkGebied_23"
   ),
@@ -223,6 +234,9 @@ dataimport_rurality <- dataimport_rurality %>%
   rename(
     "year" = "Perioden",
     "municipality" = "RegioS",
+    "total_Pop_65_75" = "k_65Tot75Jaar_4",
+    "total_Pop_75_85" = "k_75Tot85Jaar_5",
+    "total_Pop_85_up" = "k_85JaarOfOuder_6",
     "total_Pop_Urban" = "TotaalStedelijkGebied_19",
     "total_Pop_Rural" = "TotaalLandelijkGebied_23"
   )
@@ -259,7 +273,7 @@ read_and_process_shapefile <- function(year) {
   return(municipalBoundaries)
 }
 # Years to process
-years <- 2014:2018
+years <- 2014:2019
 
 # Read and process each shapefile and combine
 shapefile_data <- do.call(rbind, lapply(years, read_and_process_shapefile))
