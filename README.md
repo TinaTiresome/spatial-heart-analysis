@@ -8,11 +8,7 @@ spatial-heart-analysis/
   │   │    └──  shapefile_data.RData                                                                                
   │   └── processed_data/                                                                          
   │    ..      ├──  data.RData                                                              
-  │    ..      └──  data_unbalanced.RData                                                            
-  ├── outputs/                                                                                                              
-  │   ├── maps/                                                                                                                                                                                      
-  │   ├── graphs/                                                                                                                                                                                         
-  │   └── results/                                                           
+  │    ..      └──  data_unbalanced.RData                                                                                                                  
   ├── scripts/                                                                                                                                                                                                       
   │   ├── 1 data import.R                                                                                                                                                                                      
   │   ├── 2 data transformations.R                                   
