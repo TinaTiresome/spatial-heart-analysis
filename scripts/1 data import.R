@@ -1,6 +1,6 @@
-# Script: Data Import
+# Script: 1 Data Import
 # Author: Tina
-# Date: 6.12.2023
+# Date: 23.01.2023
 
 library(dplyr)     # for data tranformations
 library(tidyr)     # for tidy data
@@ -136,6 +136,8 @@ dataimport_region <- cbs_get_data(
     "Perioden",
     "RegioS",
     "TotaleBevolking_1",
+    "Mannen_2", 
+    "Vrouwen_3",
     "k_65Tot80Jaar_20",
     "k_80JaarOfOuder_21",
     "TotaalMetMigratieachtergrond_44",
@@ -173,6 +175,8 @@ dataimport_region <- dataimport_region %>%
     "year" = "Perioden",
     "municipality" = "RegioS",
     "total_Pop" = "TotaleBevolking_1",
+    "total_Men" = "Mannen_2", 
+    "total_Women" ="Vrouwen_3",
     "perc_Pop_aged_65_80" = "k_65Tot80Jaar_20",
     "perc_Pop_aged_80_up" = "k_80JaarOfOuder_21",
     "perc_Pop_migration_background" = "TotaalMetMigratieachtergrond_44",
