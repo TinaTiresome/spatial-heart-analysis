@@ -1,8 +1,8 @@
-# Script: Analysis
+# Script: 3 Analysis
 # Author: Tina
-# Date: 12.12.2023
+# Date: 25.01.2024
 
-# 1. Preliminaries
+# 1. Preliminaries ####
 ## Load Libraries
 library(dplyr)     # For data transformations
 library(tidyr)     # For tidy data
@@ -22,24 +22,17 @@ load(paste(data_dir, "data.RData", sep = ""))
 load(paste(data_dir, "data_spatial.RData", sep = "")) #with geometry
 st_geometry(df_spatial) <- "geometry"
 
-# 2. Data Selection and Inspection
+# 2. Data Selection and Inspection ####
 ## Data Selection and Transformation
 df_model <- df %>% select(
   # ID, group, time for panel model
   unique_id,
   municipality,
   year,
-  # quadratic time measure
-  # year_centered,
-  # year_squared,
   # dependent var
-  perc_Pop_65_to_75_Meds,
-  perc_change_Pop_65_to_75_Meds,
-  perc_Pop_65_up_Meds,
   perc_change_Pop_65_up_Meds,
   #independent vars
   perc_change_GP_within_5km,        # proximity to GP changes
-  ln_avg_Distance_GP,
   perc_Pop_65_up,                   # age demographic control
   perc_change_deaths_CVD,           # CVD control
   ln_perc_Pop_migration_background, # socioeconomic control
@@ -47,8 +40,17 @@ df_model <- df %>% select(
   ln_pop_density_km2,               # rurality control
   # spatial divisions
   predominantly_Rural,              # binary rural var
-  provinceNUTS                      # provinces as categorical
-  # perc_Pop_Social_Security_excl_Pensioners, (excluding for multicol)
+  provinceNUTS,                     # provinces as categorical
+  # var for sample descriptives
+  sex_ratio,
+  total_Pop,
+  perc_Pop_65_up_Meds,
+  GP_within_5km,
+  perc_deaths_CVD,
+  perc_Pop_migration_background,
+  avg_Standardized_Income,
+  pop_density_km2,
+  avg_Distance_GP
 )
 
 # Saving model with outliers included (and making it a panel df for later analysis)
@@ -65,8 +67,75 @@ df_descriptive_stats <-
   describe(df_model[, sapply(df_model, is.numeric)])
 print(df_descriptive_stats)
 
-### Model ####
-# model fit
+# 3. Models ####
+#  Null Model ####
+null_model <-
+  plm(
+    perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km,
+    data = df_panel,
+    model = "pooling",
+    index = c("municipality", "year")
+  )
+# print(summary(null_model))
+## Clustered Robust Standard Error Adjustment
+clustered_robust_se_0 <- vcovHC(null_model, method = "arellano", type = "HC1", cluster = "group")
+summary(null_model, vcov = clustered_robust_se_0)
+
+#  Null Model+year ####
+null_model_year <-
+  plm(
+    perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km + year,
+    data = df_panel,
+    model = "pooling",
+    index = c("municipality", "year")
+  )
+# print(summary(null_model))
+## Clustered Robust Standard Error Adjustment
+clustered_robust_se_0_Y <- vcovHC(null_model_year, method = "arellano", type = "HC1", cluster = "group")
+summary(null_model_year, vcov = clustered_robust_se_0_Y)
+
+#  RQ1 Model ####
+# Age Demographic model
+RQ1_model <-
+  plm(
+    perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km + perc_Pop_65_up,
+    data = df_panel,
+    model = "pooling",
+    index = c("municipality", "year")
+  )
+# print(summary(RQ1_model))
+## Clustered Robust Standard Error Adjustment
+clustered_robust_se_RQ1 <- vcovHC(RQ1_model, method = "arellano", type = "HC1", cluster = "group")
+summary(RQ1_model, vcov = clustered_robust_se_RQ1)
+
+#  RQ2 Models ####
+# Rural
+model_rural <-
+  plm(
+    perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km + 
+      perc_Pop_65_up + perc_change_deaths_CVD +
+      ln_perc_Pop_migration_background + ln_avg_Standardized_Income + 
+      ln_pop_density_km2 + year,
+    data = df_panel[df_panel$predominantly_Rural == 1, ],
+    model = "pooling"
+  )
+clustered_robust_se_rural <- vcovHC(model_rural, method = "arellano", type = "HC1", cluster = "group")
+summary(model_rural, vcov = clustered_robust_se_rural)
+
+# Urban
+model_urban <-
+  plm(
+    perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km + 
+      perc_Pop_65_up + perc_change_deaths_CVD +
+      ln_perc_Pop_migration_background + ln_avg_Standardized_Income + 
+      ln_pop_density_km2 + year,
+    data = df_panel[df_panel$predominantly_Rural == 0, ],
+    model = "pooling"
+  )
+clustered_robust_se_urban <- vcovHC(model_urban, method = "arellano", type = "HC1", cluster = "group")
+summary(model_urban, vcov = clustered_robust_se_urban)
+
+# Full Model ####
 model <-
   plm(
     perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km + 
@@ -77,13 +146,12 @@ model <-
     model = "pooling",
     index = c("municipality", "year")
   )
-print(summary(model))
-
+# print(summary(model))
 ## Clustered Robust Standard Error Adjustment
 clustered_robust_se <- vcovHC(model, method = "arellano", type = "HC1", cluster = "group")
 summary(model, vcov = clustered_robust_se)
 
-# assumption testing
+# Full Model assumption testing ####
 ## VIF
 vif_values <- vif(model)
 print(vif_values)
@@ -112,8 +180,8 @@ plmtest(model, effect = "individual", type = "bp")
 plmtest(model, effect = "time", type = "bp")
 plmtest(model, effect = "twoways", type = "bp")
 
-## Serial correlation Check with Durbin-Watson
-pdwtest(model)
+## Serial correlation Check with Breusch–Godfrey
+pbgtest(model)
 
 # Wooldridge’s Test for Unobserved Effects
 pwtest(model)
@@ -140,32 +208,14 @@ print(moran.test(df_spatial$ln_avg_Standardized_Income, lw)) #extremely signific
 #ln_pop_density_km2
 print(moran.test(df_spatial$ln_pop_density_km2, lw)) #extremely significant
 
-## Urban and Rural stratified models ####
-model_rural <-
-  plm(
-    perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km + 
-      perc_Pop_65_up + perc_change_deaths_CVD +
-      ln_perc_Pop_migration_background + ln_avg_Standardized_Income + 
-      ln_pop_density_km2 + year,
-    data = df_panel[df_panel$predominantly_Rural == 1, ],
-    model = "pooling"
-  )
-clustered_robust_se_rural <- vcovHC(model_rural, method = "arellano", type = "HC1", cluster = "group")
-summary(model_rural, vcov = clustered_robust_se_rural)
+# Rural/Urban Model testing ####
+# T test
+t.test_result <- t.test(perc_Pop_65_up_Meds ~ predominantly_Rural, 
+                        data = df,
+                        var.equal = FALSE) # Assuming unequal variances
+print(t.test_result)
 
-model_urban <-
-  plm(
-    perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km + 
-      perc_Pop_65_up + perc_change_deaths_CVD +
-      ln_perc_Pop_migration_background + ln_avg_Standardized_Income + 
-      ln_pop_density_km2 + year,
-    data = df_panel[df_panel$predominantly_Rural == 0, ],
-    model = "pooling"
-  )
-clustered_robust_se_urban <- vcovHC(model_urban, method = "arellano", type = "HC1", cluster = "group")
-summary(model_urban, vcov = clustered_robust_se_urban)
-
-# assumption testing
+## assumption testing
 # THESE MODELS ARE BASED ON UNBALANCED PANELS! This causes issues, the econometrics people say
 ## VIF
 vif_values_rural <- vif(model_rural)
@@ -202,8 +252,7 @@ ggplot(
 qqnorm(residuals_values_rural)
 qqnorm(residuals_values_urban)
 
-##### Other Models ######
-### Model with outliers  ####
+# Model with outliers included ####
 # model fit
 model_with_outliers <-
   plm(
@@ -243,36 +292,3 @@ ggplot(df_with_predictions_with_outliers, aes(x = predicted_with_outliers, y = r
 
 ## QQ Plot
 qqnorm(residuals_values_with_outliers)
-
-###  Model mini with year dummies ####
-# model fit
-model_years <-
-  plm(
-    perc_change_Pop_65_up_Meds ~ perc_change_GP_within_5km + year,
-    data = df_panel,
-    model = "pooling"
-  )
-print(summary(model_years))
-
-# assumption testing
-## VIF
-vif_values_years <- vif(model_years)
-print(vif_values_years)
-
-## residual plots
-predicted_values_years <- predict(model_years)
-residuals_values_years <- residuals(model_years)
-df_with_predictions <- cbind(
-  df_panel, 
-  predicted_years = predicted_values_years, 
-  residuals_years = residuals_values_years
-)
-
-ggplot(df_with_predictions, aes(x = predicted_years, y = residuals_years)) +
-  geom_point() + geom_smooth(method = "loess", col = "red") +
-  labs(title = "Residuals vs Predicted with LOESS Line", x = "Predicted Values", y = "Residuals") +
-  theme_minimal() +
-  theme(plot.background = element_rect(fill = "white", colour = "white"))
-
-## QQ Plot
-qqnorm(residuals_values_years)
