@@ -3,12 +3,8 @@ This is the repository for the data analysis of my Bachelor's project in the fie
 ## structure
 spatial-heart-analysis/                                                                        
   ├── data/                                                                                                                      
-  │   ├── data_import/                                                                                                  
-  │   │    ├──  imported_data.RData                                                                                                
-  │   │    └──  shapefile_data.RData                                                                                
-  │   └── processed_data/                                                                          
-  │    ..      ├──  data.RData                                                              
-  │    ..      └──  data_unbalanced.RData                                                                                                                  
+  │   ├── data_import/                                                                                                                                                                              
+  │   └── processed_data/                                                                                                                                                                                       
   ├── scripts/                                                                                                                                                                                                       
   │   ├── 1 data import.R                                                                                                                                                                                      
   │   ├── 2 data transformations.R                                   
