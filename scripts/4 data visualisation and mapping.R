@@ -94,6 +94,37 @@ palette_gradient <- c("#c2f9b6",
                       "#5f0a64")
 
 #################################
+## Split Map of Pop with meds ####
+# Data preparation
+temp_df <- df_map %>%
+  filter(year == 2016)
+
+temp_df$AreaType <- ifelse(temp_df$predominantly_Rural == 1, "Rural", "Urban")
+
+# Color scale limits
+color_limits <- range(temp_df[["perc_Pop_65_up_Meds"]], na.rm = TRUE)
+
+# Custom color palette
+color_palette <- c("#FAF8FF", "#200A64")
+
+# Combined plot with facets
+ggplot(temp_df) +
+  geom_sf(aes(fill = perc_Pop_65_up_Meds)) +
+  scale_fill_gradientn(colors = color_palette, limits = color_limits, oob = scales::squish) +
+  facet_wrap(~AreaType, strip.position = "bottom") +
+  labs(title = "Share of Population aged 65+ with Cardiovascular Medication in 2016",
+       fill = "Population 65+ with Medication (%)") +
+  theme_void() +
+  theme(
+    legend.position = "bottom",
+    plot.background = element_rect(fill = "white", colour = "white"),
+    plot.title = element_text(size = 18),
+    strip.text = element_text(size = 14),
+    strip.background = element_rect(fill = "gray90", color = NA),
+    legend.title = element_text(size = 14),
+    legend.text = element_text(size = 12)
+  )
+
 
 # By year plots ####
 ## perc_change_Pop_65_up_Meds
