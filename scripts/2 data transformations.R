@@ -1,6 +1,6 @@
-# Script: Data Transformations
+# Script: 2 Data Transformations
 # Author: Tina
-# Date: 6.12.2024
+# Date: 25.01.2024
 
 library(dplyr)     # for data tranformations
 library(tidyr)     # for tidy data
@@ -42,7 +42,7 @@ df <- df %>%
     perc_Pop_65_up_Meds = round((total_Pop_65_up_Meds / total_Pop_65_up) * 100, 2)
   )
 
-## Calculating the share of population from totals ##
+## Calculating the share of population from totals and the sex ratio##
 df <- df %>%
   mutate(
     ## social security benefits
@@ -50,7 +50,9 @@ df <- df %>%
       (df$total_Social_Security_Recipiants_excl_Pensioners / df$total_Pop) * 100, 2),
     ## Deaths from CVD
     perc_deaths_CVD = round(
-      (df$total_deaths_CVD / df$total_deaths) * 100, 2)
+      (df$total_deaths_CVD / df$total_deaths) * 100, 2),
+    ## Sex-Ratio
+    sex_ratio = (total_Men / total_Women)
     )
 
 ## Transforming Variables with log ##
@@ -199,13 +201,12 @@ df_unbalanced <- df %>%
       "provinceNUTS",          # for RSE clustering or as dummy
       "Regions",               # region code for shapefile join
       # extras
+      "sex_ratio",             # Men / Women
       "total_Pop",
       "rel_pop_growth",
       "shrinkage_region"
     )
   )
-# 2140 obs, 31 col
-# with extra year: 2996
 
 #### Cleaning ####
 # df is the subset with complete cases (missing values removed)
